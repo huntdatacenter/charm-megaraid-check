@@ -10,7 +10,7 @@ jobs:
           python-version: '3.x'
       - run: pip install tox
       - name: Run linter
-        run: make lint
+        run: tox -e lint
   build:
     runs-on: ubuntu-18.04
     steps:
@@ -20,7 +20,7 @@ jobs:
           python-version: '3.7.x'
       - run: pip install tox
       - name: Build charm
-        run: make build
+        run: tox -e build
       - name: Upload charm artifact
         uses: actions/upload-artifact@v1
         with:
@@ -58,5 +58,4 @@ jobs:
         run: |
           sudo snap install juju --classic --channel=${{ matrix.juju_channel }}
           sudo su $(whoami) -c 'juju bootstrap localhost --no-gui'
-      - name: Run tests
-        run: make test-${{ matrix.bundle_series }}
+          echo ${{ matrix.ubuntu_series }}
