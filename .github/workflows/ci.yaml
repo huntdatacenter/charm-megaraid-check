@@ -3,7 +3,6 @@ on: [push, pull_request]
 env:
   CHARM_NAME: megaraid-check
   CHARM_BUILD_DIR: /tmp/charm-builds
-  CHARM_PATH: ${{ CHARM_NAME }}/${{ CHARM_BUILD_DIR }}
 jobs:
   lint:
     runs-on: ubuntu-18.04
@@ -29,7 +28,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: charm
-          path: ${{ CHARM_PATH }}
+          path: ${{ CHARM_BUILD_DIR }}/${{ CHARM_NAME }}
   test:
     runs-on: ubuntu-18.04
     needs: build
@@ -52,7 +51,7 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: charm
-          path: ${{ CHARM_PATH }}
+          path: ${{ CHARM_BUILD_DIR }}/${{ CHARM_NAME }}
       - name: Set up LXD
         run: |
           sudo usermod --append --groups lxd $(whoami)
