@@ -1,0 +1,81 @@
+- hosts: localhost
+  tasks:
+    ### STORCLI
+    - name: Install unzip required for unarchive module
+      apt:
+        name: unzip
+      tags: storcli
+
+    - name: Set facts
+      set_fact:
+        storcli_basename: "{{ storcli_url | basename | splitext | first }}"
+        storcli_extract_path: "/tmp/{{ storcli_url | basename | splitext | first }}"
+      tags: storcli
+
+    - name: Create storcli extract directory "{{ storcli_extract_path }}"
+      file:
+        dest: "{{ storcli_extract_path }}"
+        state: directory
+      tags: storcli
+
+    - name: Download storcli and extract to "{{ storcli_extract_path }}"
+      unarchive:
+        src: "{{ storcli_url }}"
+        dest: "{{ storcli_extract_path }}"
+        remote_src: yes
+        list_files: yes
+      register: unarchived
+      tags: storcli
+
+    # Ansible cannot handle downgrade of package
+    # Uninstalling as a workaround
+    # https://github.com/ansible/ansible/issues/29451
+    - name: Uninstall storcli
+      apt:
+        name: storcli
+        state: absent
+      tags: storcli
+
+    - name: Install storcli "{{ storcli_deb }}"
+      apt:
+        deb: "{{ storcli_extract_path }}/{{ storcli_deb }}"
+      vars:
+        storcli_deb: "{{ unarchived.files | select('match', 'Ubuntu.*.deb$') | list | first }}"
+      tags: storcli
+
+
+    ### CHECK_LSI_RAID
+    - name: Install libfile-which-perl dependency for "{{ plugin_name }}"
+      apt:
+        name: libfile-which-perl
+      tags: check
+
+    - name: Clone "{{ check_repo }}"
+      git:
+        repo: "{{ check_repo }}"
+        version: "{{ check_version }}"
+        dest: "/opt/{{ plugin_name }}"
+      tags: check
+
+    - name: Copy "{{ plugin_name }}" to "/usr/lib/nagios/plugins"
+      copy:
+        src: "/opt/{{ plugin_name }}/{{ plugin_name }}"
+        dest: "/usr/lib/nagios/plugins/{{ plugin_name }}"
+        mode: "u=rwx,g=rx,o=rx"
+        remote_src: yes
+      tags: check
+
+    - name: Create sudoers file for "{{ plugin_name }}"
+      copy:
+        content: |
+          nagios ALL=(root) NOPASSWD:{{ storcli_path }}
+        dest: "/etc/sudoers.d/{{ plugin_name }}"
+        validate: "/usr/sbin/visudo -csf %s"
+        mode: "0440"
+      tags: check
+
+    - name: Remove sudoers file for "{{ plugin_name }}"
+      file:
+        path: "/etc/sudoers.d/{{ plugin_name }}"
+        state: absent
+      tags: never, uninstall

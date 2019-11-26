@@ -1,0 +1,21 @@
+repo: https://github.com/huntdatacenter/charm-megaraid-check.git
+includes:
+  - 'layer:basic'
+  - 'layer:nagios'
+  - 'interface:nrpe-external-master'
+options:
+  basic:
+    python_packages: ['ansible']
+    use_venv: true
+    include_system_packages: true
+exclude:
+  - .pre-commit-config.yaml
+  - .yamllint.yaml
+  - .github
+  - version
+  - tox.ini
+  - tests
+  # Does not get excluded for some reason
+  # - .gitignore
+  # - requirements.txt
+  # - Makefile

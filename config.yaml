@@ -1,0 +1,35 @@
+options:
+  storcli-url:
+    type: string
+    default: "https://docs.broadcom.com/docs-and-downloads/raid-controllers/raid-controllers-common-files/MR_SAS_Unified_StorCLI_007.1108.0000.0000.zip"
+    description: |
+      The URL to an archived StorCLI package.
+      Default is the upstream Broadcom download page.
+      See https://www.broadcom.com/support/download-search for other versions.
+  check-version:
+    type: string
+    default: master
+    description: |
+      The versions of the check_lsi_raid repository to check out.
+      This can be a branch, tag or hash.
+      See 'version' parameter in https://docs.ansible.com/ansible/latest/modules/git_module.html for more information.
+  check-repo:
+    type: string
+    default: https://github.com/huntdatacenter/check_lsi_raid.git
+    description: |
+      The repository to clone the check_lsi_raid plugin from.
+      Using forked repository as default due to https://github.com/thomas-krenn/check_lsi_raid/issues/24
+      Upstream bug prevents usage of newer StorCLI versions.
+      See https://github.com/thomas-krenn/check_lsi_raid.git for upstream repository.
+  check-parameters:
+    type: string
+    default: ""
+    description: |
+      The parameters for the check_lsi_raid check.
+      See 'check_lsi_raid --help' for more information.
+  check-remove:
+    type: boolean
+    default: false
+    description: |
+      Workaround due to current inability to remove check in Nagios when charm is removed.
+      Set to true to remove the NRPE check before removing charm.

@@ -1,0 +1,62 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  lint:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v1
+        with:
+          python-version: '3.x'
+      - run: pip install tox
+      - name: Run linter
+        run: make lint
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v1
+        with:
+          python-version: '3.7.x'
+      - run: pip install tox
+      - name: Build charm
+        run: make build
+      - name: Upload charm artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: charm
+          path: /tmp/charm-builds/extra-nrpe-example
+  test:
+    runs-on: ubuntu-18.04
+    needs: build
+    strategy:
+      matrix:
+        juju_channel:
+          - 2.4/stable
+          - 2.5/stable
+          - 2.6/stable
+        bundle_series:
+          - xenial
+          - bionic
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v1
+        with:
+          python-version: '3.7.x'
+      - run: pip install tox
+      - name: Download charm artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: charm
+          path: /tmp/charm-builds/extra-nrpe-example
+      - name: Set up LXD
+        run: |
+          sudo usermod --append --groups lxd $(whoami)
+          sudo su $(whoami) -c 'lxd init --auto'
+          sudo su $(whoami) -c 'lxc network set lxdbr0 ipv6.address none'
+      - name: Set up juju
+        run: |
+          sudo snap install juju --classic --channel=${{ matrix.juju_channel }}
+          sudo su $(whoami) -c 'juju bootstrap localhost --no-gui'
+      - name: Run tests
+        run: make test-${{ matrix.bundle_series }}

@@ -1,0 +1,21 @@
+series: xenial
+applications:
+  megaraid-check:
+    charm: /tmp/charm-builds/megaraid-check
+  nagios:
+    charm: cs:nagios
+    num_units: 1
+  nrpe:
+    charm: cs:nrpe
+  ubuntu:
+    charm: cs:ubuntu
+    num_units: 1
+relations:
+- - nrpe:general-info
+  - ubuntu:juju-info
+- - nrpe:nrpe-external-master
+  - megaraid-check:nrpe-external-master
+- - nagios:monitors
+  - nrpe:monitors
+- - ubuntu:juju-info
+  - megaraid-check:juju-info

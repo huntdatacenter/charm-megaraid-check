@@ -1,0 +1,26 @@
+name: megaraid-check
+summary: MegaRAID Controller Checks
+maintainer: Sandor Zeestraten <sandor.zeestraten@ntnu.no>
+description: |
+  Monitors MegaRAID controllers with the check_lsi_raid Nagios plugin from Thomas-Krenn.
+tags:
+  - monitoring
+  - nagios
+  - nrpe
+  - storcli
+  - megaraid
+  - lsi
+  - avago
+  - broadcom
+subordinate: true
+series:
+  - xenial
+  - bionic
+requires:
+  juju-info:
+    interface: juju-info
+    scope: container
+provides:
+  nrpe-external-master:
+    interface: nrpe-external-master
+    scope: container
