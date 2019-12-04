@@ -33,11 +33,11 @@ force-upgrade: ## Force upgrade charm
 	juju upgrade-charm $(CHARM_NAME) --path $(CHARM_BUILD_DIR)/$(CHARM_NAME) --force-units
 
 
-test-xenial: ## Test xenial deployment
+test-xenial-bundle: ## Test Xenial bundle
 	tox -e test-xenial
 
 
-test-bionic: ## Test bionic bundle
+test-bionic-bundle: ## Test Bionic bundle
 	tox -e test-bionic
 
 
