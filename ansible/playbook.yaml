@@ -73,9 +73,3 @@
         validate: "/usr/sbin/visudo -csf %s"
         mode: "0440"
       tags: check
-
-    - name: Remove sudoers file for "{{ plugin_name }}"
-      file:
-        path: "/etc/sudoers.d/{{ plugin_name }}"
-        state: absent
-      tags: never, uninstall

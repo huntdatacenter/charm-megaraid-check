@@ -73,13 +73,6 @@ def missing_nrpe():
         status_set('blocked', 'missing relation to nrpe')
 
 
-@when('megaraid.configured')
-@when_not('nrpe-external-master.available')
-def lost_nrpe():
-    remove_check()
-    remove_state('megaraid.configured')
-
-
 # Configs
 @when('nrpe-external-master.available')
 @when_any('config.changed.storcli-url',
@@ -101,31 +94,16 @@ def check_changed():
 @when('config.changed.check-remove')
 def remove_check_changed():
     if config('check-remove'):
-        remove_check()
+        nrpe_setup = nrpe.NRPE(primary=False)
+        nrpe_setup.remove_check(shortname=CHECK_NAME)
+        nrpe_setup.write()
     else:
         configure_check()
 
 
 # Hooks
-@hook('stop')
-def stop():
-    remove_check()
-    apply_playbook(
-        playbook='ansible/playbook.yaml',
-        tags=['uninstall'],
-        extra_vars=dict(plugin_name=PLUGIN_NAME,
-                        storcli_path=STORCLI_PATH))
-
-
 @hook('upgrade-charm')
 def upgrade_charm():
     remove_state('megaraid.version')
     remove_state('megaraid.installed')
     remove_state('megaraid.configured')
-
-
-# Functions
-def remove_check():
-    nrpe_setup = nrpe.NRPE(primary=False)
-    nrpe_setup.remove_check(shortname=CHECK_NAME)
-    nrpe_setup.write()
