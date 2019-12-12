@@ -36,6 +36,7 @@ jobs:
           - 2.4/stable
           - 2.5/stable
           - 2.6/stable
+          - 2.7/stable
         test_bundles:
           - xenial-bundle
           - bionic-bundle
