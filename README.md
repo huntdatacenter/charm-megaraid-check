@@ -9,7 +9,7 @@ This charm can be deployed to any principal application, but requires that the [
 Here is an example where `ubuntu` is the principal application:
 
 ```shell
-juju deploy ~huntdatacenter/megaraid-check
+juju deploy cs:~huntdatacenter/megaraid-check
 juju deploy nrpe
 juju deploy ubuntu
 juju deploy nagios
