@@ -1,4 +1,6 @@
-# MegaRAID Check
+# MegaRAID Check 
+![](https://github.com/huntdatacenter/charm-megaraid-check/workflows/ci/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This subordinate charm is used to monitor MegaRAID controllers via NRPE (Nagios Remote Plugin Executor) with the [check_lsi_raid](https://github.com/thomas-krenn/check_lsi_raid) Nagios plugin from [Thomas-Krenn](https://www.thomas-krenn.com/).
 This charm installs the StorCLI tool (Storage Command Line Tool) which is used interact with the MegaRAID controller on the host.
