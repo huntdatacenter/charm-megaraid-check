@@ -1,6 +1,5 @@
 - hosts: localhost
   tasks:
-    ### STORCLI
     - name: Install unzip required for unarchive module
       apt:
         name: unzip
@@ -43,26 +42,16 @@
         storcli_deb: "{{ unarchived.files | select('match', 'Ubuntu.*.deb$') | list | first }}"
       tags: storcli
 
-
-    ### CHECK_LSI_RAID
     - name: Install libfile-which-perl dependency for "{{ plugin_name }}"
       apt:
         name: libfile-which-perl
       tags: check
 
-    - name: Clone "{{ check_repo }}"
+    - name: Clone "{{ check_repo }}" to "/opt/{{ plugin_name }}"
       git:
         repo: "{{ check_repo }}"
         version: "{{ check_version }}"
         dest: "/opt/{{ plugin_name }}"
-      tags: check
-
-    - name: Copy "{{ plugin_name }}" to "/usr/lib/nagios/plugins"
-      copy:
-        src: "/opt/{{ plugin_name }}/{{ plugin_name }}"
-        dest: "/usr/lib/nagios/plugins/{{ plugin_name }}"
-        mode: "u=rwx,g=rx,o=rx"
-        remote_src: yes
       tags: check
 
     - name: Create sudoers file for "{{ plugin_name }}"
