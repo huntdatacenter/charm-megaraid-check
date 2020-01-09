@@ -57,7 +57,6 @@ jobs:
       # Workarounds for https://github.com/actions/upload-artifact/issues/38
       - run: chmod +x -R /tmp/charm-builds/megaraid-check/bin
       - run: chmod +x -R /tmp/charm-builds/megaraid-check/hooks
-      - run: ls -la -R /tmp/charm-builds/megaraid-check/
       - name: Set up LXD
         run: |
           sudo usermod --append --groups lxd $(whoami)
