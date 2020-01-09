@@ -37,7 +37,6 @@ jobs:
       fail-fast: false
       matrix:
         juju_channel:
-          - 2.4/stable
           - 2.5/stable
           - 2.6/stable
           - 2.7/stable
@@ -55,6 +54,10 @@ jobs:
         with:
           name: charm
           path: /tmp/charm-builds/megaraid-check
+      # Workarounds for https://github.com/actions/upload-artifact/issues/38
+      - run: chmod +x -R /tmp/charm-builds/megaraid-check/bin
+      - run: chmod +x -R /tmp/charm-builds/megaraid-check/hooks
+      - run: ls -la -R /tmp/charm-builds/megaraid-check/
       - name: Set up LXD
         run: |
           sudo usermod --append --groups lxd $(whoami)
@@ -67,3 +70,8 @@ jobs:
         run: |
           sudo snap install juju --classic --channel=${{ matrix.juju_channel }}
           sudo su $(whoami) -c 'juju bootstrap localhost --no-gui'
+      - name: Run tests
+        run: make test-${{ matrix.test_bundles }}
+      - name: Display juju debug log on failure
+        run: juju debug-log --lines 100
+        if: failure()
