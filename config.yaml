@@ -7,15 +7,12 @@ options:
       See 'check_lsi_raid --help' for more information.
   check_repo:
     type: string
-    default: "https://github.com/huntdatacenter/check_lsi_raid.git"
+    default: "https://github.com/thomas-krenn/check_lsi_raid.git"
     description: |
       The repository to clone the check_lsi_raid plugin from.
-      Using forked repository as default due to https://github.com/thomas-krenn/check_lsi_raid/issues/24
-      Upstream bug prevents usage of newer StorCLI versions.
-      See https://github.com/thomas-krenn/check_lsi_raid.git for upstream repository.
   check_version:
     type: string
-    default: "master"
+    default: "2f28ea4969c0c4c9d6928a323a6130e26261062e"
     description: |
       The versions of the check_lsi_raid repository to check out.
       This can be a branch, tag or hash.
